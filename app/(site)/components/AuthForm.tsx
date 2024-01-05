@@ -69,10 +69,20 @@ const AuthForm = () => {
         });
     }
   };
+
   const socialActions = (action: string) => {
     setIsLoading(true);
-    //NextAuth Social Login
+    signIn(action, { redirect: false })
+      .then((response) => {
+        if (response?.error) {
+          toast.error(response?.error);
+        } else if (response?.ok) {
+          toast.success("Login successful");
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
+
   return (
     <div className="mt-6 sm:w-full sm:max-w-md sm:mx-auto">
       <div className="bg-white px-4 py-8 sm:rounded-lg sm:px-10 shadow">
