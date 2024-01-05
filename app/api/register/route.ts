@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 export const POST = async (request: Request) => {
   try {
     const body = await request.json();
-    console.log("from register post request", request, body);
     const { name, email, password } = body;
     if (!name || !email || !password) {
       return new NextResponse("Missing name or email or password", {
