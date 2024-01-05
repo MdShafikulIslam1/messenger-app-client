@@ -8,8 +8,11 @@ import AuthSocialButton from "./AuthSocialButton";
 
 import { BsGoogle, BsGithub } from "react-icons/bs";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 type Variant = "LOGIN" | "REGISTER";
+
 const AuthForm = () => {
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,6 +29,7 @@ const AuthForm = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FieldValues>({
     defaultValues: {
       name: "",
@@ -35,15 +39,34 @@ const AuthForm = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log("sign up data: " + data);
     setIsLoading(true);
     if (variant === "REGISTER") {
       //Axios Registration
-      const response = await axios.post("/api/register", data);
-      console.log("response ", response);
+      const response = await axios
+        .post("/api/register", data)
+        .catch((error) => {
+          toast.error(error?.response?.data);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
     if (variant === "LOGIN") {
-      //NextAuth Login
+      signIn("credentials", {
+        ...data,
+        redirect: false,
+      })
+        .then((response) => {
+          if (response?.error) {
+            toast.error(response?.error);
+          } else if (response?.ok) {
+            toast.success("Login successful");
+          }
+        })
+        .finally(() => {
+          reset();
+          setIsLoading(false);
+        });
     }
   };
   const socialActions = (action: string) => {
