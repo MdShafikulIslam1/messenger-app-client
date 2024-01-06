@@ -1,17 +1,21 @@
-"use client";
+'use client';
 
-import { useParams, usePathname } from "next/navigation";
-import EmptyState from "../components/EmptyState";
+import clsx from "clsx";
+
 import useConversation from "../hooks/useConversation";
+import EmptyState from "../components/EmptyState";
 
-const ConversationHomePage = () => {
-
+const Home = () => {
   const { isOpen } = useConversation();
+
   return (
-    <div>
+    <div className={clsx(
+      'lg:pl-80 h-full lg:block', 
+      isOpen ? 'block' : 'hidden'
+    )}>
       <EmptyState />
     </div>
-  );
-};
+  )
+}
 
-export default ConversationHomePage;
+export default Home;
