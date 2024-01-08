@@ -3,7 +3,7 @@
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useConversation from "../hooks/useConversation";
 import axios from "axios";
-import { HiPhoto } from "react-icons/hi2";
+import { HiPaperAirplane, HiPhoto } from "react-icons/hi2";
 import MessageInput from "./MessageInput";
 
 const Form = () => {
@@ -41,6 +41,12 @@ const Form = () => {
           required
           type="text"
         />
+         <button
+        type="submit"
+        className="p-2 bg-sky-500 hover:bg-sky-600 transition rounded-full cursor-pointer"
+      >
+        <HiPaperAirplane className="text-white" size={18} />
+      </button>
       </form>
     </div>
   );
