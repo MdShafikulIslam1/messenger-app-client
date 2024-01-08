@@ -7,17 +7,7 @@ export const POST = async (request: Request) => {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
-    console.log("body inside the conversation api", body);
     const { userId, isGroup, members, name } = body;
-
-    console.log("currentUser", currentUser);
-    console.log("userId", userId);
-
-    console.log("members", members);
-    console.log(
-      "member?.value",
-      members?.map((member: { value: string }) => member?.value)
-    );
 
     if (!currentUser) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -68,7 +58,8 @@ export const POST = async (request: Request) => {
     if (singleConversation) {
       return NextResponse.json(singleConversation);
     }
-
+    console.log("exists", existingConversations);
+    console.log("singleConversation", singleConversation);
     const newSingleConversation = await prisma.conversation.create({
       data: {
         users: {
@@ -79,6 +70,7 @@ export const POST = async (request: Request) => {
         users: true,
       },
     });
+    console.log("newSingleConversation", newSingleConversation);
     return NextResponse.json(newSingleConversation);
   } catch (error) {
     return new NextResponse("internal error", { status: 500 });
