@@ -3,7 +3,7 @@ const getMessages = async (conversationId: string) => {
   try {
     const messages = await prisma.message.findMany({
       where: {
-        id: conversationId,
+        conversationId: conversationId,
       },
       include: {
         sender: true,
@@ -13,6 +13,7 @@ const getMessages = async (conversationId: string) => {
         createdAt: "asc",
       },
     });
+
     return messages;
   } catch (error) {
     return [];

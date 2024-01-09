@@ -15,7 +15,6 @@ const ConversationBox = ({ data, selected }: ConversationBoxProps) => {
   const router = useRouter();
   const session = useSession();
   const otherUser = useOtherUser(data);
-  console.log("inside ConversationBox otherUser: " + otherUser);
 
   const handleClick = useCallback(() => {
     router.push(`/conversations/${data.id}`);

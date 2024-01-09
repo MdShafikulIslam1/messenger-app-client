@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 
-async function POST(request: Request) {
+export async function POST(request: Request) {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
@@ -12,6 +12,7 @@ async function POST(request: Request) {
     if (!currentUser?.id || !currentUser.email) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
     const newMessage = await prisma.message.create({
       data: {
         body: message,

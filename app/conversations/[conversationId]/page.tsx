@@ -11,7 +11,8 @@ interface IParams {
 
 const ConversationId = async ({ params }: { params: IParams }) => {
   const conversation = await getConversationById(params?.conversationId);
-  const messages = await getMessages(params.conversationId);
+  const messages = await getMessages(params?.conversationId);
+
 
   if (!conversation) {
     return (
@@ -25,9 +26,9 @@ const ConversationId = async ({ params }: { params: IParams }) => {
   return (
     <div className="lg:pl-80 h-full">
       <div className="flex flex-col h-full">
-      <Header conversation={conversation!}/>
-      <Body/>
-      <Form/>
+        <Header conversation={conversation!} />
+        <Body initialMessage={messages} />
+        <Form />
       </div>
     </div>
   );
