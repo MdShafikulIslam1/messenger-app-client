@@ -97,10 +97,7 @@ const GroupChatModal = ({ isOpen, onClose, users }: GroupChatModalProps) => {
             Cancel
           </Button>
 
-          <Button
-            disabled={isLoading}
-            type="submit"
-          >
+          <Button disabled={isLoading} type="submit">
             Create
           </Button>
         </div>

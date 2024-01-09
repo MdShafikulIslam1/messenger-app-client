@@ -7,6 +7,7 @@ import { FullConversationType } from "@/app/types";
 import clsx from "clsx";
 import Avatar from "./Avatar";
 import { format } from "date-fns";
+import AvatarGroup from "./AvatarGroup";
 type ConversationBoxProps = {
   data: FullConversationType;
   selected?: boolean;
@@ -60,7 +61,11 @@ const ConversationBox = ({ data, selected }: ConversationBoxProps) => {
       )}
       onClick={handleClick}
     >
-      <Avatar user={data} />
+      {data?.isGroup ? (
+        <AvatarGroup users={data?.users} />
+      ) : (
+        <Avatar user={otherUser!} />
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
