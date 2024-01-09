@@ -65,7 +65,7 @@ model Conversation {
 
 model Message {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  body String?
+  body String? //message
   image String?
   createdAt DateTime @default(now())
 
