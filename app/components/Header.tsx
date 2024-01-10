@@ -36,7 +36,7 @@ const Header = ({ conversation }: HeaderProps) => {
       <div className="bg-white w-full px-4 py-3 sm:px-4 lg:px-6 flex justify-between items-center border-b-[1px] shadow-sm">
         <div className="flex items-center gap-3">
           <Link
-            href="/conversation"
+            href="/conversations"
             className="lg:hidden block text-sky-500 hover:text-sky-600 transition cursor-pointer"
           >
             <HiChevronLeft size={32} />

@@ -1,6 +1,7 @@
 import getCurrentUser from "@/app/action/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
 interface IParams {
   conversationId?: string;
@@ -35,6 +36,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
     //find last message
     const lastMessage = conversation.messages[conversation.messages.length - 1];
+
     if (!lastMessage) {
       return NextResponse.json(conversation);
     }
@@ -56,6 +58,26 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         seen: true,
       },
     });
+
+    //update all connection with new seen users
+
+    await pusherServer.trigger(currentUser?.email!, "conversation:update", {
+      id: conversationId,
+      messages: [updateMessage],
+    });
+
+    if (lastMessage.seenIds?.indexOf(currentUser?.id) !== -1) {
+      return NextResponse.json(conversation);
+    }
+
+    //update last message seen
+
+    await pusherServer.trigger(
+      conversationId!,
+      "messages:update",
+      updateMessage
+    );
+
     return new NextResponse("Success");
   } catch (error) {
     console.log("SEEN_MESSAGE_ERROR", error);

@@ -2,6 +2,7 @@ import getCurrentUser from "@/app/action/getCurrentUser";
 import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
 export const POST = async (request: Request) => {
   try {
@@ -34,6 +35,17 @@ export const POST = async (request: Request) => {
           users: true,
         },
       });
+
+      newConversations?.users.forEach((user) => {
+        if (user?.email) {
+          pusherServer.trigger(
+            user.email,
+            "conversation:new",
+            newConversations
+          );
+        }
+      });
+
       return NextResponse.json(newConversations);
     }
 
@@ -69,6 +81,17 @@ export const POST = async (request: Request) => {
         users: true,
       },
     });
+
+    newSingleConversation?.users.forEach((user) => {
+      if (user?.email) {
+        pusherServer.trigger(
+          user.email,
+          "conversation:new",
+          newSingleConversation
+        );
+      }
+    });
+
     return NextResponse.json(newSingleConversation);
   } catch (error) {
     return new NextResponse("internal error", { status: 500 });

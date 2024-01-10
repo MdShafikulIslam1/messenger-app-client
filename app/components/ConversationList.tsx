@@ -5,27 +5,59 @@ import { MdOutlineGroupAdd } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { FullConversationType } from "../types";
 import useConversation from "../hooks/useConversation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import ConversationBox from "./ConversationBox";
 import GroupChatModal from "./GroupChatModal";
 import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { pusherClient } from "../libs/pusher";
+import { find } from "lodash";
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
   users: User[];
 }
 
-const ConversationList = ({ initialItems,users }: ConversationListProps) => {
+const ConversationList = ({ initialItems, users }: ConversationListProps) => {
+  const session = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [items, setItems] = useState(initialItems);
   const router = useRouter();
   const { isOpen, conversationId } = useConversation();
 
+  const pusherKey = useMemo(() => {
+    return session?.data?.user?.email;
+  }, [session?.data?.user?.email]);
+
+  useEffect(() => {
+    if (!pusherKey) {
+      return;
+    }
+
+    const newConversationHandler = (conversation: FullConversationType) => {
+      console.log("pusher client: " + conversation);
+      setItems((current) => {
+        if (find(current, { id: conversation.id })) {
+          return current;
+        }
+        return [conversation, ...current];
+      });
+    };
+
+    pusherClient.subscribe(pusherKey);
+    pusherClient.bind("conversation:new", newConversationHandler);
+
+    return () => {
+      pusherClient.unsubscribe(pusherKey);
+      pusherClient.unbind("conversation:new", newConversationHandler);
+    };
+  }, [pusherKey]);
+
   return (
     <>
       <GroupChatModal
-      users = { users }
+        users={users}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />

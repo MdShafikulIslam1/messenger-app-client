@@ -37,11 +37,23 @@ const Body = ({ initialMessage }: BodyProps) => {
       bottomRef.current?.scrollIntoView();
     };
 
+    const updateMessageHandler = (updateMessage: FullMessageType) => {
+      setMessages((currentMessages) =>
+        currentMessages?.map((message) => {
+          if (message?.id === updateMessage?.id) {
+            return updateMessage;
+          }
+          return message;
+        })
+      );
+    };
     pusherClient.bind("messages:new", messageHandler);
+    pusherClient.bind("messages:update", updateMessageHandler);
 
     return () => {
       pusherClient.unsubscribe(conversationId);
       pusherClient.unbind("messages:new", messageHandler);
+      pusherClient.unbind("messages:update", updateMessageHandler);
     };
   }, [conversationId]);
 
